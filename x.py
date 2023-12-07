@@ -53,3 +53,61 @@ model_tuned.fit(X_train, y_train)
 y_test_pred_tuned = model_tuned.predict(X_test)
 test_mse_tuned = mean_squared_error(y_test, y_test_pred_tuned)
 print(f'Tuned Model Test MSE: {test_mse_tuned}')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Hiperparametre Ayarlamaları ile Aşırı Uyuma Kontrolü
+# Örneğin, ağaç sayısı ve ağaç derinliğini kontrol edelim
+model_tuned = xgb.XGBRegressor(objective='reg:squarederror', n_estimators=100, max_depth=3, random_state=42)
+model_tuned.fit(X_train, y_train)
+
+# Modelin performansını değerlendirin
+y_test_pred_tuned = model_tuned.predict(X_test)
+test_mse_tuned = mean_squared_error(y_test, y_test_pred_tuned)
+test_rmse_tuned = np.sqrt(test_mse_tuned)
+test_mae_tuned = mean_absolute_error(y_test, y_test_pred_tuned)
+test_r2_tuned = r2_score(y_test, y_test_pred_tuned)
+
+print("Tuned Model Performans Metrikleri:")
+print(f'Test MSE: {test_mse_tuned}')
+print(f'Test RMSE: {test_rmse_tuned}')
+print(f'Test MAE: {test_mae_tuned}')
+print(f'Test R-squared: {test_r2_tuned}')
+
+
+
+
+# K-fold Çapraz Doğrulama ile Performansı Değerlendirme
+# K-fold çapraz doğrulama için bir KFold nesnesi oluşturun
+kf = KFold(n_splits=5, shuffle=True, random_state=42)
+
+# XGBoost modelinizi kullanarak RMSE skorlarını alın
+cv_scores = cross_val_score(model, X, y, cv=kf, scoring='neg_mean_squared_error')
+
+# Skorları pozitif hale getirin ve karekök alarak RMSE'ye dönüştürün
+cv_rmse_scores = np.sqrt(-cv_scores)
+
+# K-fold çapraz doğrulama sonuçlarını yazdır
+print("K-fold Çapraz Doğrulama RMSE Skorları (Orijinal Model):")
+for i, score in enumerate(cv_rmse_scores):
+    print(f'Fold-{i+1}: {score}')
+
+# Tuned Model ile K-fold Çapraz Doğrulama
+cv_scores_tuned = cross_val_score(model_tuned, X, y, cv=kf, scoring='neg_mean_squared_error')
+cv_rmse_scores_tuned = np.sqrt(-cv_scores_tuned)
+
+print("\nK-fold Çapraz Doğrulama RMSE Skorları (Tuned Model):")
+for i, score in enumerate(cv_rmse_scores_tuned):
+    print(f'Fold-{i+1}: {score}')
+
