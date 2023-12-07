@@ -1,0 +1,10 @@
+print(f'MSE: {mse_train}')
+print(f'RMSE: {rmse_train}')
+print(f'MAE: {mae_train}')
+print(f'R-squared: {r2_train}')
+
+print("\nTest Seti Performans Metrikleri:")
+print(f'MSE: {mse_test}')
+print(f'RMSE: {rmse_test}')
+print(f'MAE: {mae_test}')
+print(f'R-squared: {r2_test}')
